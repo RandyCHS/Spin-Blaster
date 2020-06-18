@@ -23,7 +23,7 @@ function buildGun () {
 `, SpriteKind.Player)
     gun.bottom = scene.screenHeight()
     gun.right = 120
-    gun.vx = 100
+    gun.vx = 50 + level * 50
     gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
 function gun_charging () {
@@ -38,11 +38,12 @@ controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function launchSpinner () {
-    myPolygon = polygon.createPolygon(Math.randomRange(3, 10), Math.randomRange(r_min[level], r_max[level]), Math.randomRange(1, 14), 0)
+    radius = Math.randomRange(r_min[level], r_max[level])
+    myPolygon = polygon.createPolygon(Math.randomRange(3, 10), radius, Math.randomRange(1, 14), 0)
     mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
     myPolygon.spokes = true
     myPolygon.sprite.setKind(SpriteKind.polygon)
-    myPolygon.sprite.x = 0
+    myPolygon.sprite.x = Math.randomRange(0, 160)
     myPolygon.sprite.y = 30
     myPolygon.sprite.vx = Math.randomRange(20, 150)
     myPolygon.sprite.ax = Math.randomRange(-50, 50)
@@ -53,6 +54,7 @@ function start_game () {
     info.startCountdown(60)
     b_gun_ready = true
     start_gun_charging_time = game.runtime()
+    buildGun()
     launchSpinner()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -96,6 +98,7 @@ function level_changed () {
     b_changing_level = true
     output.say(Level_name[level], 3000)
     spinner.destroySpinner(mySpinner)
+    gun.destroy()
     pause(1000)
     start_game()
     b_changing_level = false
@@ -107,7 +110,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, other
         otherSprite.vx = 0
         otherSprite.ax = 0
         pause(200)
-        music.pewPew.play()
+        music.playTone(262, music.beat(BeatFraction.Half))
         otherSprite.startEffect(effects.fire, 1000)
         otherSprite.ay = 150
         mySpinner.speed = 20
@@ -135,6 +138,7 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 let particle: Sprite = null
 let mySpinner: spinner.Spinner = null
 let myPolygon: Polygon = null
+let radius = 0
 let start_gun_charging_time = 0
 let b_gun_ready = false
 let gun: Sprite = null
@@ -146,7 +150,8 @@ let r_min: number[] = []
 let Level_name: string[] = []
 let level = 0
 let T = "Shoot with Button A. "
-T = "" + T + "Change level with left, up, and right buttons. Left = Beginner. Up = Normal. Right = Advanced."
+T = "" + T + "Change level with left, up, and right buttons. "
+T = "" + T + "Left = Beginner. Up = Normal. Right = Advanced."
 game.showLongText(T, DialogLayout.Center)
 level = 1
 Level_name = ["Beginner", "Normal", "Advanced"]
@@ -158,7 +163,6 @@ output = sprites.create(img`
 output.y = 80
 b_in_overlap = false
 b_changing_level = false
-buildGun()
 start_game()
 game.onUpdate(function () {
     if (game.runtime() - start_gun_charging_time > 1000) {
