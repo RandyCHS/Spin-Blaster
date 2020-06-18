@@ -36,9 +36,9 @@ function launchSpinner () {
     myPolygon.sprite.setFlag(SpriteFlag.BounceOnWall, true)
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
-    music.magicWand.play()
     info.changeScoreBy(-1)
     if (game.runtime() - priorShot > 1000) {
+        music.magicWand.play()
         particle = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
