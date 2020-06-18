@@ -2,26 +2,6 @@ namespace SpriteKind {
     export const polygon = SpriteKind.create()
     export const none = SpriteKind.create()
 }
-sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
-    b_in_overlap = true
-    mySpinner.speed = 0
-    otherSprite.vx = 0
-    otherSprite.ax = 0
-    pause(200)
-    music.powerDown.play()
-    otherSprite.startEffect(effects.fire, 1000)
-    otherSprite.ay = 150
-    mySpinner.speed = 20
-    mySpinner.direction = Direction.Clockwise
-    pause(300)
-    mySpinner.direction = Direction.Clockwise
-    pause(500)
-    info.changeScoreBy(myPolygon.sides)
-    spinner.destroySpinner(mySpinner)
-    pause(200)
-    b_in_overlap = false
-    launchSpinner()
-})
 function buildGun () {
     gun = sprites.create(img`
 . . . . . . . c 7 . . . . . . . 
@@ -42,8 +22,8 @@ function buildGun () {
 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
 `, SpriteKind.Player)
     gun.bottom = scene.screenHeight()
-    gun.left = 0
-    gun.vx = 50
+    gun.right = 120
+    gun.vx = 100
     gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
 function gun_charging () {
@@ -51,8 +31,14 @@ function gun_charging () {
     b_gun_ready = false
     start_gun_charging_time = game.runtime()
 }
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (!(b_changing_level)) {
+        level = 0
+        level_changed()
+    }
+})
 function launchSpinner () {
-    myPolygon = polygon.createPolygon(Math.randomRange(3, 6), Math.randomRange(20, 40), Math.randomRange(1, 14), 0)
+    myPolygon = polygon.createPolygon(Math.randomRange(3, 10), Math.randomRange(r_min[level], r_max[level]), Math.randomRange(1, 14), 0)
     mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
     myPolygon.spokes = true
     myPolygon.sprite.setKind(SpriteKind.polygon)
@@ -61,7 +47,13 @@ function launchSpinner () {
     myPolygon.sprite.vx = Math.randomRange(20, 150)
     myPolygon.sprite.ax = Math.randomRange(-50, 50)
     myPolygon.sprite.setFlag(SpriteFlag.BounceOnWall, true)
-    output.say(myPolygon.type, 2000)
+}
+function start_game () {
+    info.setScore(0)
+    info.startCountdown(60)
+    b_gun_ready = true
+    start_gun_charging_time = game.runtime()
+    launchSpinner()
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     info.changeScoreBy(-1)
@@ -94,40 +86,80 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
     gun_charging()
 })
-controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (mySlider.value > 0) {
-        mySlider.value = mySlider.value - 1
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (!(b_changing_level)) {
+        level = 2
+        level_changed()
     }
 })
-controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    if (mySlider.value < 2) {
-        mySlider.value = mySlider.value + 1
+function level_changed () {
+    b_changing_level = true
+    output.say(Level_name[level], 3000)
+    spinner.destroySpinner(mySpinner)
+    pause(1000)
+    start_game()
+    b_changing_level = false
+}
+sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
+    if (!(b_in_overlap)) {
+        b_in_overlap = true
+        mySpinner.speed = 0
+        otherSprite.vx = 0
+        otherSprite.ax = 0
+        pause(200)
+        music.pewPew.play()
+        otherSprite.startEffect(effects.fire, 1000)
+        otherSprite.ay = 150
+        mySpinner.speed = 20
+        mySpinner.direction = Direction.Clockwise
+        pause(300)
+        mySpinner.direction = Direction.Clockwise
+        pause(500)
+        info.changeScoreBy(myPolygon.sides)
+        spinner.destroySpinner(mySpinner)
+        pause(500)
+        launchSpinner()
+        b_in_overlap = false
     }
 })
 function gun_ready () {
     gun.image.replace(2, 7)
     b_gun_ready = true
 }
-let mySlider: Slider = null
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (!(b_changing_level)) {
+        level = 1
+        level_changed()
+    }
+})
 let particle: Sprite = null
-let gun: Sprite = null
-let myPolygon: Polygon = null
 let mySpinner: spinner.Spinner = null
+let myPolygon: Polygon = null
 let start_gun_charging_time = 0
 let b_gun_ready = false
-let output: Sprite = null
+let gun: Sprite = null
+let b_changing_level = false
 let b_in_overlap = false
-b_in_overlap = false
+let output: Sprite = null
+let r_max: number[] = []
+let r_min: number[] = []
+let Level_name: string[] = []
+let level = 0
+let T = "Shoot with Button A. "
+T = "" + T + "Change level with left, up, and right buttons. Left = Beginner. Up = Normal. Right = Advanced."
+game.showLongText(T, DialogLayout.Center)
+level = 1
+Level_name = ["Beginner", "Normal", "Advanced"]
+r_min = [30, 10, 10]
+r_max = [50, 30, 20]
 output = sprites.create(img`
 . 
 `, SpriteKind.none)
 output.y = 80
+b_in_overlap = false
+b_changing_level = false
 buildGun()
-launchSpinner()
-info.setScore(0)
-b_gun_ready = true
-start_gun_charging_time = game.runtime()
-info.startCountdown(60)
+start_game()
 game.onUpdate(function () {
     if (game.runtime() - start_gun_charging_time > 1000) {
         if (!(b_in_overlap)) {
