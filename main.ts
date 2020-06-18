@@ -1,11 +1,6 @@
 namespace SpriteKind {
     export const polygon = SpriteKind.create()
 }
-function launchSpinner () {
-    myPolygon = polygon.createPolygon(Math.randomRange(3, 6), Math.randomRange(10, 20), Math.randomRange(1, 14), 0)
-    mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
-    myPolygon.sprite.setKind(SpriteKind.polygon)
-}
 function buildGun () {
     gun = sprites.create(img`
 . . . . . . . c d . . . . . . . 
@@ -27,8 +22,22 @@ function buildGun () {
 `, SpriteKind.Player)
     gun.bottom = scene.screenHeight()
     gun.left = 0
+    gun.vx = 100
+    gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
-controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
+function launchSpinner () {
+    myPolygon = polygon.createPolygon(Math.randomRange(3, 6), Math.randomRange(10, 20), Math.randomRange(1, 14), 0)
+    mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
+    myPolygon.sprite.setKind(SpriteKind.polygon)
+    myPolygon.sprite.x = 0
+    myPolygon.sprite.y = 20
+    myPolygon.sprite.vx = Math.randomRange(20, 150)
+    myPolygon.sprite.ax = Math.randomRange(-50, 50)
+    myPolygon.sprite.setFlag(SpriteFlag.BounceOnWall, true)
+    myPolygon.sprite.say(myPolygon.type, 500)
+}
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    info.changeScoreBy(-1)
     particle = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
@@ -49,14 +58,20 @@ controller.B.onEvent(ControllerButtonEvent.Pressed, function () {
 `, SpriteKind.Player)
     particle.bottom = gun.top
     particle.x = gun.x
-    particle.vx = -100
+    particle.vy = -100
     particle.startEffect(effects.trail)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
-	
+    otherSprite.startEffect(effects.fire)
+    pause(300)
+    info.changeScoreBy(myPolygon.sides)
+    spinner.destroySpinner(mySpinner)
+    launchSpinner()
 })
 let particle: Sprite = null
-let gun: Sprite = null
 let mySpinner: spinner.Spinner = null
 let myPolygon: Polygon = null
+let gun: Sprite = null
 buildGun()
+launchSpinner()
+info.setScore(0)
