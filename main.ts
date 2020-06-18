@@ -12,9 +12,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, other
     otherSprite.startEffect(effects.fire, 1000)
     otherSprite.ay = 150
     mySpinner.speed = 20
-    mySpinner.direction = Direction.Reverse
+    mySpinner.direction = Direction.Clockwise
     pause(300)
-    mySpinner.direction = Direction.Reverse
+    mySpinner.direction = Direction.Clockwise
     pause(500)
     info.changeScoreBy(myPolygon.sides)
     spinner.destroySpinner(mySpinner)
@@ -94,10 +94,21 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     }
     gun_charging()
 })
+controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (mySlider.value > 0) {
+        mySlider.value = mySlider.value - 1
+    }
+})
+controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
+    if (mySlider.value < 2) {
+        mySlider.value = mySlider.value + 1
+    }
+})
 function gun_ready () {
     gun.image.replace(2, 7)
     b_gun_ready = true
 }
+let mySlider: Slider = null
 let particle: Sprite = null
 let gun: Sprite = null
 let myPolygon: Polygon = null
