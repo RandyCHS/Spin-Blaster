@@ -46,6 +46,11 @@ function buildGun () {
     gun.vx = 50
     gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
+function gun_charging () {
+    gun.image.replace(7, 2)
+    b_gun_ready = false
+    start_gun_charging_time = game.runtime()
+}
 function launchSpinner () {
     myPolygon = polygon.createPolygon(Math.randomRange(3, 6), Math.randomRange(20, 40), Math.randomRange(1, 14), 0)
     mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
@@ -60,7 +65,7 @@ function launchSpinner () {
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     info.changeScoreBy(-1)
-    if (!(b_gun_charging)) {
+    if (b_gun_ready) {
         music.magicWand.play()
         particle = sprites.create(img`
 . . . . . . . . . . . . . . . . 
@@ -84,22 +89,21 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         particle.x = gun.x
         particle.vy = -100
         particle.startEffect(effects.trail)
+    } else {
+        gun.startEffect(effects.ashes)
     }
+    gun_charging()
 })
-function start_charging_gun () {
-    gun.image.replace(7, 2)
-    b_gun_charging = true
-    gun_charging_time = game.runtime()
-}
 function gun_ready () {
     gun.image.replace(2, 7)
+    b_gun_ready = true
 }
-let gun_charging_time = 0
 let particle: Sprite = null
-let b_gun_charging = false
 let gun: Sprite = null
 let myPolygon: Polygon = null
 let mySpinner: spinner.Spinner = null
+let start_gun_charging_time = 0
+let b_gun_ready = false
 let output: Sprite = null
 let b_in_overlap = false
 b_in_overlap = false
@@ -110,10 +114,11 @@ output.y = 80
 buildGun()
 launchSpinner()
 info.setScore(0)
-let priorShot = game.runtime()
+b_gun_ready = true
+start_gun_charging_time = game.runtime()
 info.startCountdown(60)
 game.onUpdate(function () {
-    if (game.runtime() - gun_charging_time > 1000) {
+    if (game.runtime() - start_gun_charging_time > 1000) {
         if (!(b_in_overlap)) {
             gun_ready()
         }
