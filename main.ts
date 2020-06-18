@@ -3,9 +3,9 @@ namespace SpriteKind {
 }
 function buildGun () {
     gun = sprites.create(img`
-. . . . . . . c d . . . . . . . 
-. . . . . . . c d . . . . . . . 
-. . . . . . . c d . . . . . . . 
+. . . . . . . c 7 . . . . . . . 
+. . . . . . . c 7 . . . . . . . 
+. . . . . . . c 7 . . . . . . . 
 . . . . . . . c b . . . . . . . 
 . . . . . . . f f . . . . . . . 
 . . . . . . . c 7 . . . . . . . 
@@ -17,16 +17,21 @@ function buildGun () {
 . . . . 8 8 7 7 7 5 6 6 . . . . 
 . . 8 f f f c c 6 6 f f 6 6 . . 
 . 8 8 8 8 6 6 7 7 7 7 5 7 6 6 . 
-8 8 8 8 8 8 6 6 7 7 7 5 7 7 6 6 
-8 8 8 8 8 8 6 6 7 7 7 7 5 7 6 6 
+7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
+7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
 `, SpriteKind.Player)
     gun.bottom = scene.screenHeight()
     gun.left = 0
-    gun.vx = 100
+    gun.vx = 50
     gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
+function start_charging_gun () {
+    gun.image.replace(7, 2)
+    b_gun_charging = true
+    gun_charging_time = game.runtime()
+}
 function launchSpinner () {
-    myPolygon = polygon.createPolygon(Math.randomRange(3, 6), Math.randomRange(10, 20), Math.randomRange(1, 14), 0)
+    myPolygon = polygon.createPolygon(Math.randomRange(3, 6), Math.randomRange(20, 40), Math.randomRange(1, 14), 0)
     mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
     myPolygon.sprite.setKind(SpriteKind.polygon)
     myPolygon.sprite.x = 0
@@ -38,33 +43,37 @@ function launchSpinner () {
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     info.changeScoreBy(-1)
     if (game.runtime() - priorShot > 1000) {
-        music.magicWand.play()
-        particle = sprites.create(img`
+        if (!(b_in_overlap)) {
+            music.magicWand.play()
+            particle = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
-. . . . . . . c c c . . . . . . 
-. . . . . . a b a a . . . . . . 
-. . . . . c b a f c a c . . . . 
-. . . . c b b b f f a c c . . . 
-. . . . b b f a b b a a c . . . 
-. . . . c b f f b a f c a . . . 
-. . . . . c a a c b b a . . . . 
-. . . . . . c c c c . . . . . . 
-. . . . . . . c . . . . . . . . 
+. . . . . . . 2 2 2 . . . . . . 
+. . . . . . 4 b 4 4 . . . . . . 
+. . . . . 2 b 4 f 2 4 2 . . . . 
+. . . . 2 b b b f f 4 2 2 . . . 
+. . . . b b f 4 b b 4 4 2 . . . 
+. . . . 2 b f f b 4 f 2 4 . . . 
+. . . . . 2 4 4 2 b b 4 . . . . 
+. . . . . . 2 2 2 2 . . . . . . 
+. . . . . . . 2 . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `, SpriteKind.Player)
-        particle.bottom = gun.top
-        particle.x = gun.x
-        particle.vy = -100
-        particle.startEffect(effects.trail)
+            particle.bottom = gun.top
+            particle.x = gun.x
+            particle.vy = -100
+            particle.startEffect(effects.trail)
+        }
     }
+    start_charging_gun()
     priorShot = game.runtime()
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
+    b_in_overlap = true
     mySpinner.speed = 0
     otherSprite.vx = 0
     otherSprite.ax = 0
@@ -79,15 +88,31 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, other
     pause(500)
     info.changeScoreBy(myPolygon.sides)
     spinner.destroySpinner(mySpinner)
+    pause(200)
+    b_in_overlap = false
     launchSpinner()
 })
+function gun_ready () {
+    gun.image.replace(2, 7)
+}
 let particle: Sprite = null
 let mySpinner: spinner.Spinner = null
 let myPolygon: Polygon = null
+let gun_charging_time = 0
+let b_gun_charging = false
 let gun: Sprite = null
 let priorShot = 0
+let b_in_overlap = false
+b_in_overlap = false
 buildGun()
 launchSpinner()
 info.setScore(0)
 priorShot = game.runtime()
 info.startCountdown(60)
+game.onUpdate(function () {
+    if (game.runtime() - gun_charging_time > 1000) {
+        if (!(b_in_overlap)) {
+            gun_ready()
+        }
+    }
+})
