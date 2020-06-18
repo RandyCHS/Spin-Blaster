@@ -34,9 +34,9 @@ function launchSpinner () {
     myPolygon.sprite.vx = Math.randomRange(20, 150)
     myPolygon.sprite.ax = Math.randomRange(-50, 50)
     myPolygon.sprite.setFlag(SpriteFlag.BounceOnWall, true)
-    myPolygon.sprite.say(myPolygon.type, 500)
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    music.magicWand.play()
     info.changeScoreBy(-1)
     if (game.runtime() - priorShot > 1000) {
         particle = sprites.create(img`
@@ -65,8 +65,18 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     priorShot = game.runtime()
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
-    otherSprite.startEffect(effects.fire)
-    pause(300)
+    mySpinner.speed = 0
+    otherSprite.vx = 0
+    otherSprite.ax = 0
+    pause(200)
+    music.powerDown.play()
+    otherSprite.startEffect(effects.fire, 1000)
+    otherSprite.ay = 150
+    mySpinner.speed = 20
+    mySpinner.direction = Direction.Counterclockwise
+    pause(500)
+    mySpinner.direction = Direction.Clockwise
+    pause(500)
     info.changeScoreBy(myPolygon.sides)
     spinner.destroySpinner(mySpinner)
     launchSpinner()
