@@ -30,7 +30,7 @@ function launchSpinner () {
     mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
     myPolygon.sprite.setKind(SpriteKind.polygon)
     myPolygon.sprite.x = 0
-    myPolygon.sprite.y = 20
+    myPolygon.sprite.y = 30
     myPolygon.sprite.vx = Math.randomRange(20, 150)
     myPolygon.sprite.ax = Math.randomRange(-50, 50)
     myPolygon.sprite.setFlag(SpriteFlag.BounceOnWall, true)
@@ -38,7 +38,8 @@ function launchSpinner () {
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     info.changeScoreBy(-1)
-    particle = sprites.create(img`
+    if (game.runtime() - priorShot > 1000) {
+        particle = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
@@ -56,10 +57,12 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `, SpriteKind.Player)
-    particle.bottom = gun.top
-    particle.x = gun.x
-    particle.vy = -100
-    particle.startEffect(effects.trail)
+        particle.bottom = gun.top
+        particle.x = gun.x
+        particle.vy = -100
+        particle.startEffect(effects.trail)
+    }
+    priorShot = game.runtime()
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
     otherSprite.startEffect(effects.fire)
@@ -72,6 +75,9 @@ let particle: Sprite = null
 let mySpinner: spinner.Spinner = null
 let myPolygon: Polygon = null
 let gun: Sprite = null
+let priorShot = 0
 buildGun()
 launchSpinner()
 info.setScore(0)
+priorShot = game.runtime()
+info.startCountdown(60)
