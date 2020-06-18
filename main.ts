@@ -1,6 +1,27 @@
 namespace SpriteKind {
     export const polygon = SpriteKind.create()
+    export const none = SpriteKind.create()
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
+    b_in_overlap = true
+    mySpinner.speed = 0
+    otherSprite.vx = 0
+    otherSprite.ax = 0
+    pause(200)
+    music.powerDown.play()
+    otherSprite.startEffect(effects.fire, 1000)
+    otherSprite.ay = 150
+    mySpinner.speed = 20
+    mySpinner.direction = Direction.Reverse
+    pause(300)
+    mySpinner.direction = Direction.Reverse
+    pause(500)
+    info.changeScoreBy(myPolygon.sides)
+    spinner.destroySpinner(mySpinner)
+    pause(200)
+    b_in_overlap = false
+    launchSpinner()
+})
 function buildGun () {
     gun = sprites.create(img`
 . . . . . . . c 7 . . . . . . . 
@@ -25,27 +46,23 @@ function buildGun () {
     gun.vx = 50
     gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
-function start_charging_gun () {
-    gun.image.replace(7, 2)
-    b_gun_charging = true
-    gun_charging_time = game.runtime()
-}
 function launchSpinner () {
     myPolygon = polygon.createPolygon(Math.randomRange(3, 6), Math.randomRange(20, 40), Math.randomRange(1, 14), 0)
     mySpinner = spinner.createSpinner(myPolygon, Math.randomRange(0, 20), Direction.Random)
+    myPolygon.spokes = true
     myPolygon.sprite.setKind(SpriteKind.polygon)
     myPolygon.sprite.x = 0
     myPolygon.sprite.y = 30
     myPolygon.sprite.vx = Math.randomRange(20, 150)
     myPolygon.sprite.ax = Math.randomRange(-50, 50)
     myPolygon.sprite.setFlag(SpriteFlag.BounceOnWall, true)
+    output.say(myPolygon.type, 2000)
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     info.changeScoreBy(-1)
-    if (game.runtime() - priorShot > 1000) {
-        if (!(b_in_overlap)) {
-            music.magicWand.play()
-            particle = sprites.create(img`
+    if (!(b_gun_charging)) {
+        music.magicWand.play()
+        particle = sprites.create(img`
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
@@ -63,51 +80,37 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
 . . . . . . . . . . . . . . . . 
 . . . . . . . . . . . . . . . . 
 `, SpriteKind.Player)
-            particle.bottom = gun.top
-            particle.x = gun.x
-            particle.vy = -100
-            particle.startEffect(effects.trail)
-        }
+        particle.bottom = gun.top
+        particle.x = gun.x
+        particle.vy = -100
+        particle.startEffect(effects.trail)
     }
-    start_charging_gun()
-    priorShot = game.runtime()
 })
-sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, otherSprite) {
-    b_in_overlap = true
-    mySpinner.speed = 0
-    otherSprite.vx = 0
-    otherSprite.ax = 0
-    pause(200)
-    music.powerDown.play()
-    otherSprite.startEffect(effects.fire, 1000)
-    otherSprite.ay = 150
-    mySpinner.speed = 20
-    mySpinner.direction = Direction.Counterclockwise
-    pause(500)
-    mySpinner.direction = Direction.Clockwise
-    pause(500)
-    info.changeScoreBy(myPolygon.sides)
-    spinner.destroySpinner(mySpinner)
-    pause(200)
-    b_in_overlap = false
-    launchSpinner()
-})
+function start_charging_gun () {
+    gun.image.replace(7, 2)
+    b_gun_charging = true
+    gun_charging_time = game.runtime()
+}
 function gun_ready () {
     gun.image.replace(2, 7)
 }
-let particle: Sprite = null
-let mySpinner: spinner.Spinner = null
-let myPolygon: Polygon = null
 let gun_charging_time = 0
+let particle: Sprite = null
 let b_gun_charging = false
 let gun: Sprite = null
-let priorShot = 0
+let myPolygon: Polygon = null
+let mySpinner: spinner.Spinner = null
+let output: Sprite = null
 let b_in_overlap = false
 b_in_overlap = false
+output = sprites.create(img`
+. 
+`, SpriteKind.none)
+output.y = 80
 buildGun()
 launchSpinner()
 info.setScore(0)
-priorShot = game.runtime()
+let priorShot = game.runtime()
 info.startCountdown(60)
 game.onUpdate(function () {
     if (game.runtime() - gun_charging_time > 1000) {
