@@ -50,6 +50,7 @@ function launchSpinner () {
     myPolygon.sprite.setFlag(SpriteFlag.BounceOnWall, true)
 }
 function start_game () {
+    output.say(Level_name[level], 3000)
     info.setScore(0)
     info.startCountdown(60)
     b_gun_ready = true
@@ -149,9 +150,9 @@ let r_max: number[] = []
 let r_min: number[] = []
 let Level_name: string[] = []
 let level = 0
-let T = "Shoot with Button A. "
-T = "" + T + "Change level with left, up, and right buttons. "
-T = "" + T + "Left = Beginner. Up = Normal. Right = Advanced."
+let T = "Buttons:  "
+T = "" + T + "A = shoots. Left = Beginner. "
+T = "" + T + "Up = Normal. Right = Advanced."
 game.showLongText(T, DialogLayout.Center)
 level = 1
 Level_name = ["Beginner", "Normal", "Advanced"]
