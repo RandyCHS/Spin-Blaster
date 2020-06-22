@@ -1,4 +1,4 @@
-# shooting-spinners ![Build status badge](https://github.com/wecodemakecode/polygon-shooter/workflows/MakeCode/badge.svg)
+# Spin Blaster ![Build status badge](https://github.com/wecodemakecode/polygon-shooter/workflows/MakeCode/badge.svg)
 
 
 
