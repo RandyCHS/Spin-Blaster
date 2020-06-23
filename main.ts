@@ -116,9 +116,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, other
         otherSprite.ay = 150
         mySpinner.speed = 20
         pause(300)
-        mySpinner.direction = Direction.Reverse
+        mySpinner.direction = Direction.Clockwise
         pause(300)
-        mySpinner.direction = Direction.Reverse
+        mySpinner.direction = Direction.Clockwise
         pause(500)
         info.changeScoreBy(myPolygon.sides)
         spinner.destroySpinner(mySpinner)
