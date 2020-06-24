@@ -3,7 +3,6 @@
     "description": "",
     "dependencies": {
         "device": "*",
-        "slider ext": "github:wecodemakecode/slider-ext#master",
         "Polygon Ext 2": "github:wecodemakecode/polygon-ext#master"
     },
     "files": [
