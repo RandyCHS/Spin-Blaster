@@ -23,7 +23,6 @@ function buildGun () {
 `, SpriteKind.Player)
     gun.bottom = scene.screenHeight()
     gun.right = 120
-    gun.vx = 50 + level * 50
     gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
 function init_levels () {
@@ -36,12 +35,6 @@ function init_levels () {
 `, SpriteKind.none)
     output.y = 80
     output.say(Level_name[level], 3000)
-}
-function show_instructions () {
-    T = "Buttons:  "
-    T = "" + T + "A = shoots. Left = Beginner. "
-    T = "" + T + "Up = Normal. Right = Advanced."
-    game.showLongText(T, DialogLayout.Center)
 }
 function gun_charging () {
     gun.image.replace(7, 2)
@@ -69,8 +62,15 @@ function launchSpinner () {
 function start_game () {
     info.setScore(0)
     info.startCountdown(60)
+    gun.vx = 50 + level * 50
     gun_ready()
     launchSpinner()
+}
+function show_instructions () {
+    T = "Buttons:  "
+    T = "" + T + "A = shoots. Left = Beginner. "
+    T = "" + T + "Up = Normal. Right = Advanced."
+    game.showLongText(T, DialogLayout.Center)
 }
 controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     info.changeScoreBy(-1)
@@ -111,8 +111,9 @@ controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function level_changed () {
     b_changing_level = true
-    output.say(Level_name[level], 3000)
+    pause(1000)
     spinner.destroySpinner(mySpinner)
+    output.say(Level_name[level], 3000)
     pause(1000)
     start_game()
     b_changing_level = false
@@ -129,9 +130,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.polygon, function (sprite, other
         otherSprite.ay = 150
         mySpinner.speed = 20
         pause(300)
-        mySpinner.direction = Direction.Clockwise
+        mySpinner.direction = Direction.Reverse
         pause(300)
-        mySpinner.direction = Direction.Clockwise
+        mySpinner.direction = Direction.Reverse
         pause(500)
         info.changeScoreBy(myPolygon.sides)
         spinner.destroySpinner(mySpinner)
@@ -151,17 +152,17 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 let particle: Sprite = null
+let T = ""
 let mySpinner: spinner.Spinner = null
 let myPolygon: Polygon = null
 let radius = 0
 let start_gun_charging_time = 0
 let b_gun_ready = false
-let T = ""
 let output: Sprite = null
+let level = 0
 let r_max: number[] = []
 let r_min: number[] = []
 let Level_name: string[] = []
-let level = 0
 let gun: Sprite = null
 let b_changing_level = false
 let b_in_overlap = false
