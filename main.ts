@@ -4,23 +4,23 @@ namespace SpriteKind {
 }
 function buildGun () {
     gun = sprites.create(img`
-. . . . . . . c 7 . . . . . . . 
-. . . . . . . c 7 . . . . . . . 
-. . . . . . . c 7 . . . . . . . 
-. . . . . . . c b . . . . . . . 
-. . . . . . . f f . . . . . . . 
-. . . . . . . c 7 . . . . . . . 
-. . . . . . . f f . . . . . . . 
-. . . . . . . 8 7 . . . . . . . 
-. . . . . . 8 8 5 6 . . . . . . 
-. . . . . . 8 7 5 6 . . . . . . 
-. . . . . c c c 6 6 6 . . . . . 
-. . . . 8 8 7 7 7 5 6 6 . . . . 
-. . 8 f f f c c 6 6 f f 6 6 . . 
-. 8 8 8 8 6 6 7 7 7 7 5 7 6 6 . 
-7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 
-`, SpriteKind.Player)
+        . . . . . . . c 7 . . . . . . .
+        . . . . . . . c 7 . . . . . . .
+        . . . . . . . c 7 . . . . . . .
+        . . . . . . . c b . . . . . . .
+        . . . . . . . f f . . . . . . .
+        . . . . . . . c 7 . . . . . . .
+        . . . . . . . f f . . . . . . .
+        . . . . . . . 8 7 . . . . . . .
+        . . . . . . 8 8 5 6 . . . . . .
+        . . . . . . 8 7 5 6 . . . . . .
+        . . . . . c c c 6 6 6 . . . . .
+        . . . . 8 8 7 7 7 5 6 6 . . . .
+        . . 8 f f f c c 6 6 f f 6 6 . .
+        . 8 8 8 8 6 6 7 7 7 7 5 7 6 6 .
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+        7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7
+    `, SpriteKind.Player)
     gun.bottom = scene.screenHeight()
     gun.right = 120
     gun.setFlag(SpriteFlag.BounceOnWall, true)
@@ -31,8 +31,8 @@ function init_levels () {
     r_max = [50, 30, 20]
     level = 1
     output = sprites.create(img`
-. 
-`, SpriteKind.none)
+        .
+    `, SpriteKind.none)
     output.y = 80
     output.say(Level_name[level], 3000)
 }
@@ -77,23 +77,23 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
     if (b_gun_ready) {
         music.magicWand.play()
         particle = sprites.create(img`
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . 2 2 2 . . . . . . 
-. . . . . . 4 b 4 4 . . . . . . 
-. . . . . 2 b 4 f 2 4 2 . . . . 
-. . . . 2 b b b f f 4 2 2 . . . 
-. . . . b b f 4 b b 4 4 2 . . . 
-. . . . 2 b f f b 4 f 2 4 . . . 
-. . . . . 2 4 4 2 b b 4 . . . . 
-. . . . . . 2 2 2 2 . . . . . . 
-. . . . . . . 2 . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-. . . . . . . . . . . . . . . . 
-`, SpriteKind.Player)
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . 2 2 2 . . . . . .
+            . . . . . . 4 b 4 4 . . . . . .
+            . . . . . 2 b 4 f 2 4 2 . . . .
+            . . . . 2 b b b f f 4 2 2 . . .
+            . . . . b b f 4 b b 4 4 2 . . .
+            . . . . 2 b f f b 4 f 2 4 . . .
+            . . . . . 2 4 4 2 b b 4 . . . .
+            . . . . . . 2 2 2 2 . . . . . .
+            . . . . . . . 2 . . . . . . . .
+            . . . . . . . . . . . . . . . .
+            . . . . . . . . . . . . . . . .
+        `, SpriteKind.Player)
         particle.bottom = gun.top
         particle.x = gun.x
         particle.vy = -100
