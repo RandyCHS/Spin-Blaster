@@ -5,14 +5,12 @@
 
 ## Use this extension
 
-This repository can be added as an **extension** in MakeCode.
+This repository can be downloaded, edited and run in MakeCode Arcade
 
 * open https://arcade.makecode.com/
-* click on **New Project**
-* click on **Extensions** under the gearwheel menu
-* search for the URL of this repository and import
 
-## Edit this extension
+
+## Edit this Program
 
 To edit this repository in MakeCode.
 
