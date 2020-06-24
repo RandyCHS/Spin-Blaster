@@ -1,6 +1,7 @@
 # Spin Blaster ![Build status badge](https://github.com/wecodemakecode/polygon-shooter/workflows/MakeCode/badge.svg)
 
-
+## Spin Blaster in Action
+![Spin Blaster](/Spin_Blaster.gif)
 
 ## Use this extension
 
