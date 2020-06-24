@@ -26,7 +26,7 @@ function buildGun () {
     gun.setFlag(SpriteFlag.BounceOnWall, true)
 }
 function init_levels () {
-    Level_name = ["Beginner", "Normal", "Advanced"]
+    Level_name = ["Beginner", "Default", "Advanced"]
     r_min = [30, 10, 10]
     r_max = [50, 30, 20]
     level = 1
